@@ -35,5 +35,5 @@ powershell.exe ScriptHere.ps1
 ---
 
 ## Disclaimer
-Use PowerShell scripts at your own risk.
+Use the PowerShell scripts at your own risk.
 Always verify the code first!
