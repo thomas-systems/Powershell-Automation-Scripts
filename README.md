@@ -11,6 +11,7 @@ The goal of this repo is to provide **Automation Scripts** that saves time, so t
 To use these scripts, you’ll need atleast PowerShell 5.1 or higher.
 Most scripts will auto-install modules.
 Install missing modules using Install-Module ModuleName
+Recognize modules by viewing the script and Import-Module lines.
 
 ---
 
