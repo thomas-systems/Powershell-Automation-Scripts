@@ -1,9 +1,9 @@
 # ⚡ PowerShell Automation Scripts
 
 Welcome!  
-This repository contains a collection of **PowerShell automation scripts** That can be used for managing **Microsoft 365, Azure, Entra ID, Intune, Windows servers, and general IT operations**.
+This repository contains a collection of **PowerShell automation scripts** That can be used for automating daily tasks using PowerShell.
 
-The goal of this repo is to provide **clean, reusable, production-ready automation** that saves time, reduces mistakes, and improves workflows.
+The goal of this repo is to provide **Automation Scripts** that saves time, reduces mistakes, and improves your IT Department.
 
 ---
 
@@ -12,40 +12,19 @@ The goal of this repo is to provide **clean, reusable, production-ready automati
 This repository includes scripts for:
 
 ### 🔹 Microsoft 365 & Entra ID
-- Bulk user creation + assignment  
-- License management automation  
-- Group membership automation  
-- MFA/Authentication method queries  
-- User audit & reporting scripts  
-
 ### 🔹 Intune / Endpoint Management
-- Device inventory reporting  
-- Application install automation  
-- Compliance status reporting  
-
 ### 🔹 Azure
-- VM inventory & tagging  
-- Resource cleanup automation  
-- Monitoring & alerting queries  
-
 ### 🔹 Exchange Online
-- Mailbox reports  
-- Permission audits  
-- Shared mailbox automation  
+### 🔹 General Automation
 
-### 🔹 Windows & General Automation
-- Bulk CSV imports  
-- System information scripts  
-- Scheduled task automation  
-- Log & event monitor scripts  
 
 ---
 
 ## 🚀 Requirements
 
-To use these scripts, you’ll need:
+To use these scripts, you’ll need the required modules:
 
-- Windows PowerShell 5.1 **or** PowerShell 7+
+- Windows PowerShell 5.1 **or** newer
 - Required modules (depending on script):
   - `Microsoft.Graph`
   - `ExchangeOnlineManagement`
