@@ -9,8 +9,8 @@ The goal of this repo is to provide **Automation Scripts** that saves time, so t
 ## 🚀 Requirements
 
 To use these scripts, you’ll need atleast PowerShell 5.1 or higher.
-High privileged accounts are recommended to prevent issues with permissions.
 Required modules will be installed automatically.
+When you encounter an issue, verify your account has the necessary permissions
 
 ---
 
