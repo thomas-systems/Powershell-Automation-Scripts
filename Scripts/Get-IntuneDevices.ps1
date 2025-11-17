@@ -5,10 +5,7 @@
 .DESCRIPTION
     Connects to Microsoft Graph interactively,
     retrieves all managed devices (including EAS by default), and exports them to CSV.
-
- - REQUIREMENTS
-    - PowerShell 5.1 or higher
-    - Intune Admin or Global Admin permissions
+    Intune Admin Permissions are needed to run the script.
 
  .EXAMPLE
  .\Get-Intune-Devices.ps1
