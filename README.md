@@ -8,17 +8,9 @@ The goal of this repo is to provide **Automation Scripts** that saves time, so t
 
 ## 🚀 Requirements
 
-To use these scripts, you’ll need the required modules:
-
-- Windows PowerShell 5.1 **or** newer
-- Required modules (depending on script):
-  - `Microsoft.Graph`
-  - `ExchangeOnlineManagement`
-  - `AzureAD` (legacy)
-  - `Az` (Azure)
-  - `IntunePowerShellGraph` (optional)
-
+To use these scripts, you’ll need atleast PowerShell 5.1 or higher.
 Most scripts will auto-install modules if missing.
+Or install missing modules using Install-Module ModuleName
 
 ---
 
