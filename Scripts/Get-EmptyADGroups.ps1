@@ -3,8 +3,7 @@
     Exports all empty Active Directory groups for cleanup.
 
 .DESCRIPTION
-    This script scans Active Directory for security and distribution groups
-    that contain zero members. The results are exported to a CSV
+    This script finds empty Active Directory Groups. The results are exported to a CSV
     file inside the "Exports" folder.
 
 .REQUIREMENTS
@@ -61,7 +60,7 @@ $EmptyGroups |
     Export-Csv -Path $CSVPath -NoTypeInformation -Encoding UTF8
 
 # -----------------------------
-#   5. Output status
+#   5. Show Output
 # -----------------------------
 Write-Host ""
 Write-Host "-----------------------------" -ForegroundColor Green
