@@ -4,7 +4,7 @@
 
 .DESCRIPTION
     This script connects to Microsoft Graph, collects user details
-    Output is saved to a timestamped CSV file in the "Exports" folder.
+    Output is saved to a CSV file in the "Exports" folder.
 
 .NOTES
     Author: Thomas-Systems
