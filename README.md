@@ -1,9 +1,8 @@
 # ⚡ PowerShell Automation Scripts
 
-Welcome!  
 This repository contains a collection of **PowerShell automation scripts** That can be used for automating daily tasks using PowerShell.
 
-The goal of this repo is to provide **Automation Scripts** that saves time, reduces mistakes, and improves your IT Department.
+The goal of this repo is to provide **Automation Scripts** that saves time, so that you can focus on other things.
 
 ---
 
