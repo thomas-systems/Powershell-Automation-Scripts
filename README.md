@@ -36,4 +36,4 @@ powershell.exe ScriptHere.ps1
 
 ## Disclaimer
 Use the PowerShell scripts at your own risk.
-Always verify the code first before executing!
+Always verify the code before executing!
