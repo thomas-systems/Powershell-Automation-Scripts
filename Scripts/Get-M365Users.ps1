@@ -1,5 +1,5 @@
 <#
-.HEADER
+.SYNOPSIS
     Retrieves all Microsoft 365 users using Microsoft Graph and exports them to CSV.
 
 .DESCRIPTION
@@ -10,7 +10,7 @@
     Author: Thomas-Systems
     Version: 1.0
 
-.RUN SCRIPT
+.EXAMPLE
     .\Get-M365Users.ps1
 #>
 
