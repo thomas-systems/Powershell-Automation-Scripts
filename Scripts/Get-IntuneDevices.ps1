@@ -23,7 +23,7 @@ if (-not (Get-Module -ListAvailable -Name Microsoft.Graph.DeviceManagement)) {
 }
 
 #=============================
-# Connect to Microsoft Graph interactively
+# Connect to Microsoft Graph
 #=============================
 Import-Module Microsoft.Graph.DeviceManagement -ErrorAction Stop
 
