@@ -1,4 +1,4 @@
-# 🛠️ PowerShell Automation Scripts
+# 🛠️ PowerShell Automation Scripts (Universal)
 
 This repository contains a collection of **PowerShell automation scripts** That can be used for automating daily tasks using PowerShell.
 
