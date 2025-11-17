@@ -6,19 +6,6 @@ The goal of this repo is to provide **Automation Scripts** that saves time, so t
 
 ---
 
-## 📌 Contents
-
-This repository includes scripts for:
-
-### 🔹 Microsoft 365 & Entra ID
-### 🔹 Intune / Endpoint Management
-### 🔹 Azure
-### 🔹 Exchange Online
-### 🔹 General Automation
-
-
----
-
 ## 🚀 Requirements
 
 To use these scripts, you’ll need the required modules:
