@@ -1,20 +1,16 @@
 <#
-.HEADER
+.SYNOPSIS
     Exports all empty Active Directory groups for cleanup.
 
 .DESCRIPTION
     This script finds empty Active Directory Groups. The results are exported to a CSV
     file inside the "Exports" folder.
 
-.REQUIREMENTS
-    - ActiveDirectory PowerShell module
-    - Domain-joined system or RSAT tools installed
-
 .NOTES
     Author: Thomas-Systems
     Version: 1.0
 
-.RUN COMMAND
+.EXAMPLE
     .\Get-EmptyADGroups.ps1
 #>
 
