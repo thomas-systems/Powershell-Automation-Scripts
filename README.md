@@ -45,7 +45,12 @@ git clone https://github.com/thomas-systems/powershell-automation.git
 ```
 
 ## Run a Script
+```sh
 .\Scripts\ScriptHere.ps1
+```
+
 **OR**
+```sh
 Set-Location Scripts
 powershell.exe ScriptHere.ps1
+```
