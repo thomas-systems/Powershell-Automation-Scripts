@@ -19,12 +19,12 @@
 
 
 # Graph Module - Required
-#Import-Module Microsoft.Graph -ErrorAction SilentlyContinue
-#if (-not (Get-Module Microsoft.Graph)) {
-#    Write-Host "Installing Microsoft.Graph module..." -ForegroundColor Yellow
-#    Install-Module Microsoft.Graph.Intune -Scope CurrentUser -Force
-#    Import-Module Microsoft.Graph
-#}
+Import-Module Microsoft.Graph.Intune -ErrorAction SilentlyContinue
+if (-not (Get-Module Microsoft.Graph.Intune)) {
+    Write-Host "Installing Microsoft.Graph.Intune module..." -ForegroundColor Yellow
+    Install-Module Microsoft.Graph.Intune -Scope CurrentUser -Force
+    Import-Module Microsoft.Graph
+}
 
 
 # Connect to Graph
