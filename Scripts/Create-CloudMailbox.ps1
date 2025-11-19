@@ -1,6 +1,8 @@
 <#
 .SYNOPSIS
-    Universal Create-Mailbox Script for onprem Active Directory + Exchange Online
+    Universal Create-CloudMailbox Script for onprem Active Directory + Exchange Online
+    ## For other mailbox types (hybrid) DO NOT USE THIS SCRIPT! Use Enable-RemoteMailbox instead.
+    ## This Script is for Active Directory User --> Exchange Online Cloud Mailbox.
 
 .DESCRIPTION
     A simple script that:
