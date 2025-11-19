@@ -18,7 +18,7 @@ You might need to install the ActiveDirectory Module.
 
 Other required modules will be installed automatically.
 
-When you encounter an issue, verify that your account has the necessary permissions.
+Make sure that your account has the necessary permissions.
 
 ---
 
