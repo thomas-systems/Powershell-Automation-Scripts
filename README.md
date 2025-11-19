@@ -11,9 +11,13 @@ This repo can be used to learn powershell as well since the scripts are minimal 
 ## 🚀 Requirements
 
 To use these scripts, you’ll need PowerShell 5.1 or higher.
+
 You might need to change the execution-policy.
+
 You might need to install the ActiveDirectory Module.
+
 Other required modules will be installed automatically.
+
 When you encounter an issue, verify that your account has the necessary permissions.
 
 ---
