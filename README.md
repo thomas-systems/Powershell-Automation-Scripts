@@ -1,8 +1,8 @@
-# 🛠️ PowerShell Automation Scripts (Universal)
+# 🛠️ PowerShell Automation Scripts
 
-This repository contains a collection of **PowerShell automation scripts** That can be used for automating daily tasks using PowerShell.
+This repository contains a collection of **Universal PowerShell automation scripts** That can be used for automating daily tasks using PowerShell.
 
-The goal of this repo is to provide **Automation Scripts** that saves time, so that you can focus on other things.
+The goal of this repo is to provide **Simple Automation Scripts** that saves time, so that you can focus on other things.
 
 ---
 
@@ -10,7 +10,7 @@ The goal of this repo is to provide **Automation Scripts** that saves time, so t
 
 To use these scripts, you’ll need PowerShell 5.1 or higher.
 Required modules will be installed automatically.
-When you encounter an issue, verify your account has the necessary permissions.
+When you encounter an issue, verify that your account has the necessary permissions.
 
 ---
 
