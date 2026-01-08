@@ -1,21 +1,33 @@
 <#
 .SYNOPSIS
-    Active Directory Security Audit with Dashboard Output
+    Universal Active Directory User Audit Script
 
 .DESCRIPTION
-    Performs a Active Directory audit and presents results
-    in a dashboard-style output with security insights.
+    Performs a read-only audit of Active Directory user accounts.
+    Designed to run safely in any organisation without modifying data.
 
-    Designed for:
-      • Security reviews
-      • Compliance audits
-      • Identity governance
-      • Sys Admins
+    The audit identifies:
+      • Disabled user accounts
+      • Inactive users (based on last logon)
+      • Accounts that never logged on
+      • Expired passwords
+      • Passwords that never expire
+      • Accounts with password not required
+      • Privileged accounts (Domain / Enterprise / Schema Admins)
+      • Recently created users
+      • Accounts missing a description
+
+    Results are exported to CSV for reporting and compliance purposes.
 
 .AUTHOR
     Thomas-Systems
+
 .VERSION
-    1.0
+    1.2
+
+.REQUIREMENTS
+    - RSAT ActiveDirectory module
+    - Read access to Active Directory
 #>
 
 Import-Module ActiveDirectory -ErrorAction Stop
@@ -24,12 +36,17 @@ Import-Module ActiveDirectory -ErrorAction Stop
 # CONFIGURATION
 ######################################################################################################
 
-$InactiveDays   = 90
-$NewUserDays    = 14
-$ReportPath     = "C:\Reports"
-$ReportFile     = "ActiveDirectory-Audit_$(Get-Date -Format 'yyyyMMdd_HHmm').csv"
+# Inactivity threshold (days)
+$InactiveDays = 90
 
-# Add more if needed.
+# Recently created account threshold (days)
+$NewUserDays = 14
+
+# Report output
+$ReportPath = "C:\Reports"
+$ReportFile = "ActiveDirectory-Audit_$(Get-Date -Format 'yyyyMMdd_HHmm').csv"
+
+# Standard privileged groups (may not exist in all environments)
 $PrivilegedGroups = @(
     "Domain Admins",
     "Enterprise Admins",
@@ -37,31 +54,39 @@ $PrivilegedGroups = @(
 )
 
 ######################################################################################################
-# INITIALIZATION
+# PRE CHECKS...
 ######################################################################################################
-
-$Today        = Get-Date
-$InactiveCut  = $Today.AddDays(-$InactiveDays)
-$NewUserCut   = $Today.AddDays(-$NewUserDays)
 
 if (-not (Test-Path $ReportPath)) {
-    New-Item -ItemType Directory -Path $ReportPath | Out-Null
+    New-Item -Path $ReportPath -ItemType Directory | Out-Null
 }
 
-Write-Host "`n=== Active Directory Security Audit ===" -ForegroundColor Cyan
-Write-Host "Scan started: $Today`n"
+$Today       = Get-Date
+$InactiveCut = $Today.AddDays(-$InactiveDays)
+$NewUserCut  = $Today.AddDays(-$NewUserDays)
+
+Write-Host "Starting Active Directory user audit..." -ForegroundColor Cyan
 
 ######################################################################################################
-# PRIVILEGED ACCOUNT DISCOVERY
+# PRIVILEGED ACCOUNTS
 ######################################################################################################
 
-$PrivilegedUsers = foreach ($Group in $PrivilegedGroups) {
+$PrivilegedUsers = @()
+
+foreach ($Group in $PrivilegedGroups) {
     try {
-        Get-ADGroupMember $Group -Recursive |
-        Where-Object objectClass -eq "user" |
-        Select-Object -ExpandProperty SamAccountName
-    } catch {}
-} | Sort-Object -Unique
+        $Members = Get-ADGroupMember $Group -Recursive -ErrorAction Stop |
+            Where-Object { $_.objectClass -eq "user" } |
+            Select-Object -ExpandProperty SamAccountName
+
+        $PrivilegedUsers += $Members
+    } catch {
+        # Group may not exist or be accessible — ignore safely
+        continue
+    }
+}
+
+$PrivilegedUsers = $PrivilegedUsers | Sort-Object -Unique
 
 ######################################################################################################
 # USER DATA COLLECTION
@@ -82,118 +107,61 @@ $Users = Get-ADUser -Filter * -Properties `
 $Results = foreach ($User in $Users) {
 
     $NeverLoggedOn = -not $User.LastLogonDate
-    $Inactive     = $NeverLoggedOn -or ($User.LastLogonDate -lt $InactiveCut)
-    $NewAccount   = $User.WhenCreated -gt $NewUserCut
+    $IsInactive   = $NeverLoggedOn -or ($User.LastLogonDate -lt $InactiveCut)
+    $IsNewUser    = $User.WhenCreated -gt $NewUserCut
     $NoDesc       = [string]::IsNullOrWhiteSpace($User.Description)
     $Privileged   = $PrivilegedUsers -contains $User.SamAccountName
-
-    # Risk scoring
-    $RiskScore = 0
-    if ($Privileged)              { $RiskScore += 3 }
-    if ($Inactive -and $User.Enabled) { $RiskScore += 3 }
-    if ($User.PasswordNotRequired){ $RiskScore += 4 }
-    if ($User.PasswordNeverExpires){ $RiskScore += 2 }
-    if ($NeverLoggedOn)            { $RiskScore += 1 }
-
-    switch ($RiskScore) {
-        {$_ -ge 7} { $RiskLevel = "CRITICAL" }
-        {$_ -ge 4} { $RiskLevel = "HIGH" }
-        {$_ -ge 2} { $RiskLevel = "MEDIUM" }
-        default    { $RiskLevel = "LOW" }
-    }
 
     [PSCustomObject]@{
         DisplayName           = $User.DisplayName
         SamAccountName        = $User.SamAccountName
+        UserPrincipalName     = $User.UserPrincipalName
         Enabled               = $User.Enabled
-        Privileged            = $Privileged
+        PrivilegedAccount     = $Privileged
         LastLogonDate         = $User.LastLogonDate
-        Inactive              = $Inactive
         NeverLoggedOn         = $NeverLoggedOn
+        InactiveOverDays      = $InactiveDays
+        IsInactive            = $IsInactive
         PasswordExpired       = $User.PasswordExpired
         PasswordNeverExpires  = $User.PasswordNeverExpires
         PasswordNotRequired   = $User.PasswordNotRequired
-        RiskScore             = $RiskScore
-        RiskLevel             = $RiskLevel
+        RecentlyCreated       = $IsNewUser
         DescriptionMissing    = $NoDesc
         AccountCreated        = $User.WhenCreated
     }
 }
 
 ######################################################################################################
-# EXPORT
+# EXPORT RESULTS
 ######################################################################################################
 
 $FullPath = Join-Path $ReportPath $ReportFile
-$Results | Sort-Object RiskScore -Descending |
+
+$Results |
+    Sort-Object Enabled, IsInactive |
     Export-Csv -Path $FullPath -NoTypeInformation -Encoding UTF8
 
 ######################################################################################################
-# DASHBOARD OUTPUT
+# AUDIT OUTPUT
 ######################################################################################################
 
-Clear-Host
-Write-Host "================ ACTIVE DIRECTORY AUDIT DASHBOARD ================" -ForegroundColor Cyan
+Write-Host "Audit completed successfully." -ForegroundColor Green
+Write-Host "------------------------------------------------"
 
-function Stat($Label, $Value, $Color="White") {
-    Write-Host ("{0,-35}: {1}" -f $Label, $Value) -ForegroundColor $Color
-}
+Write-Host ("Total users              : {0}" -f $Results.Count)
+Write-Host ("Enabled users            : {0}" -f ($Results | Where-Object Enabled).Count)
+Write-Host ("Disabled users           : {0}" -f ($Results | Where-Object { -not $_.Enabled }).Count)
+Write-Host ("Inactive users           : {0}" -f ($Results | Where-Object IsInactive).Count)
+Write-Host ("Never logged on           : {0}" -f ($Results | Where-Object NeverLoggedOn).Count)
+Write-Host ("Password expired         : {0}" -f ($Results | Where-Object PasswordExpired).Count)
+Write-Host ("Password never expires   : {0}" -f ($Results | Where-Object PasswordNeverExpires).Count)
+Write-Host ("Password not required    : {0}" -f ($Results | Where-Object PasswordNotRequired).Count)
+Write-Host ("Privileged accounts      : {0}" -f ($Results | Where-Object PrivilegedAccount).Count)
+Write-Host ("Recently created users   : {0}" -f ($Results | Where-Object RecentlyCreated).Count)
+Write-Host ("Missing description      : {0}" -f ($Results | Where-Object DescriptionMissing).Count)
 
-Stat "Total Users"                $Results.Count
-Stat "Enabled Users"              ($Results | Where-Object Enabled).Count
-Stat "Disabled Users"             ($Results | Where-Object { -not $_.Enabled }).Count
-
-Write-Host "`n--- Activity & Hygiene ---" -ForegroundColor Yellow
-Stat "Inactive (Enabled) Users"   ($Results | Where-Object { $_.Inactive -and $_.Enabled }).Count "Red"
-Stat "Never Logged On"            ($Results | Where-Object NeverLoggedOn).Count "Red"
-Stat "Missing Description"        ($Results | Where-Object DescriptionMissing).Count
-
-Write-Host "`n--- Password & Auth Risks ---" -ForegroundColor Yellow
-Stat "Password Expired"           ($Results | Where-Object PasswordExpired).Count
-Stat "Password Never Expires"     ($Results | Where-Object PasswordNeverExpires).Count "Red"
-Stat "Password Not Required"      ($Results | Where-Object PasswordNotRequired).Count "Red"
-
-Write-Host "`n--- Privileged Access ---" -ForegroundColor Yellow
-Stat "Privileged Accounts"        ($Results | Where-Object Privileged).Count "Red"
-Stat "Privileged + Inactive"      ($Results | Where-Object { $_.Privileged -and $_.Inactive }).Count "Red"
-Stat "New Privileged Accounts"    ($Results | Where-Object { $_.Privileged -and $_.AccountCreated -gt $NewUserCut }).Count "Red"
-
-Write-Host "`n--- Risk Distribution ---" -ForegroundColor Yellow
-Stat "CRITICAL Risk Users"        ($Results | Where-Object RiskLevel -eq "CRITICAL").Count "Red"
-Stat "HIGH Risk Users"            ($Results | Where-Object RiskLevel -eq "HIGH").Count "DarkYellow"
-Stat "MEDIUM Risk Users"          ($Results | Where-Object RiskLevel -eq "MEDIUM").Count
-Stat "LOW Risk Users"             ($Results | Where-Object RiskLevel -eq "LOW").Count
-
-Write-Host "`n=================================================================="
+Write-Host "------------------------------------------------"
 Write-Host "Report exported to:" -ForegroundColor Green
 Write-Host $FullPath -ForegroundColor Yellow
-
-######################################################################################################
-# ORGANISATIONAL INSIGHTS
-######################################################################################################
-
-Write-Host "`n=== ORGANISATIONAL SECURITY INSIGHTS ===" -ForegroundColor Cyan
-
-if (($Results | Where-Object { $_.Privileged -and $_.Inactive }).Count -gt 0) {
-    Write-Host "• Inactive privileged accounts detected — review immediately." -ForegroundColor Red
-}
-
-if (($Results | Where-Object PasswordNotRequired).Count -gt 0) {
-    Write-Host "• Accounts with 'Password Not Required' found — critical misconfiguration." -ForegroundColor Red
-}
-
-if (($Results | Where-Object PasswordNeverExpires).Count -gt 0) {
-    Write-Host "• Passwords set to never expire increase credential compromise risk." -ForegroundColor Yellow
-}
-
-if (($Results | Where-Object NeverLoggedOn).Count -gt 10) {
-    Write-Host "• Large number of never-used accounts — possible provisioning issues." -ForegroundColor Yellow
-}
-
-Write-Host "`nRecommended actions:"
-Write-Host "• Disable or remove inactive accounts"
-Write-Host "• Enforce password policies"
-Write-Host "• Review privileged access regularly"
-Write-Host "• Maintain proper account descriptions"
 
 Pause
