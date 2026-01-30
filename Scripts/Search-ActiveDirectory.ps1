@@ -7,17 +7,11 @@
     using common identifiers such as Display Name, Email, UPN, SamAccountName,
     or Employee Number. It returns a detailed overview of the user account,
     including manager information, account status, license groups, Citrix
-    access, and messaging attributes.
+    access, and messaging attributes. 
+    Requirements: ActiveDirectory PowerShell module & Read Permissions.
 
 .AUTHOR
     Thomas-Systems
-
-.VERSION
-    1.0.0
-
-.REQUIREMENTS
-    - ActiveDirectory PowerShell module
-    - Appropriate AD read permissions
 
 .NOTES
     - License and Citrix group name filters are placeholders.
