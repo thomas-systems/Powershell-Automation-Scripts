@@ -1,6 +1,7 @@
 <#
 .SYNOPSIS
     Interactive Active Directory user search and overview script.
+    Author: Thomas-Systems
 
 .DESCRIPTION
     This script allows administrators to search Active Directory for a user
@@ -9,9 +10,6 @@
     including manager information, account status, license groups, Citrix
     access, and messaging attributes. 
     Requirements: ActiveDirectory PowerShell module & Read Permissions.
-
-.AUTHOR
-    Thomas-Systems
 
 .NOTES
     - License and Citrix group name filters are placeholders.
